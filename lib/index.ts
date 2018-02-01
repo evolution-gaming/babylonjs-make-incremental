@@ -2,16 +2,14 @@
  * Converted to JS from https://github.com/BabylonJS/Babylon.js/tree/master/Tools/MakeIncremental
  */
 import { join, sep } from "path";
-import { readdirSync, readFileSync, writeFileSync, statSync } from "fs";
+import { readdirSync, readFileSync, writeFileSync } from "fs";
 
 export interface OptionProps {
-    excludedPaths?: string[];
-    excludedMeshes?: {[key: string]: RegExp[]};
+    excludedMeshes?: RegExp[];
 }
 
 interface SearchOptionsProps {
-    excludedPaths: string[];
-    excludedMeshes: {[key: string]: RegExp[]};
+    excludedMeshes: RegExp[];
 }
 
 export default function makeIncremental(src: string, options: OptionProps = {}) {
@@ -22,8 +20,7 @@ export default function makeIncremental(src: string, options: OptionProps = {}) 
     const parsedSrc = fixSeparators(src);
 
     const parsedOptions = {
-        excludedPaths: (options.excludedPaths || []).map(fixSeparators),
-        excludedMeshes: (options.excludedMeshes || {}),
+        excludedMeshes: (options.excludedMeshes || []),
     };
 
     searchBabylonFiles(parsedSrc, parsedSrc, parsedOptions);
@@ -32,16 +29,9 @@ export default function makeIncremental(src: string, options: OptionProps = {}) 
 function searchBabylonFiles(root: string, currentPath: string, options: SearchOptionsProps) {
     readdirSync(currentPath).forEach((file: string) => {
         const filePath = join(currentPath, file);
-        const relativePath = trimSeparators(filePath.replace(root, ""));
         const babylonExtension = ".babylon";
 
-        if (options.excludedPaths.indexOf(relativePath) >= 0) {
-            return;
-        }
-
-        if (statSync(filePath).isDirectory()) {
-            searchBabylonFiles(root, filePath, options);
-        } else if (file.indexOf(babylonExtension) > 0
+        if (file.indexOf(babylonExtension) > 0
             && file.indexOf(babylonExtension) === file.length - babylonExtension.length
         ) {
             const scene = JSON.parse(readFileSync(filePath).toString());
@@ -50,7 +40,7 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
             scene.autoClear = true;
             scene.useDelayedTextureLoading = true;
             const doNotDelayLoadingForGeometries: string[] = [];
-            const excludedMeshes = options.excludedMeshes[relativePath] || [];
+            const excludedMeshes = options.excludedMeshes;
             // Parsing meshes
             scene.meshes.forEach((mesh: any) => {
                 if (!excludedMeshes.some(meshCheck => meshCheck.test(mesh.name))) {

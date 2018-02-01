@@ -16,8 +16,7 @@ Import/require the exposed function `makeIncremental` to your script. It accepts
 
 * `src` - *string*: The path from the project root to folder where the tool should search for `.babylon` files.
 * `options` - *object (optional)*: An object that accepts two optional attributes:
-    * `excludedPaths` - *string[] (optional)*: An array of paths (files or directories), relative to the project root, that should not be searched or processed.
-    * `excludedMeshes` - *{[key: string]: RegExp[]} (optional)*: An object, that maps paths relative to the project root, to regular expressions, that match mesh names that should not be extracted from the babylon file.
+    * `excludedMeshes` - *RegExp[] (optional)*: Regular expressions, that match mesh names that should not be extracted from the babylon file.
 
 Example usage:
 ```javascript
@@ -26,12 +25,9 @@ import makeIncremental from "babylonjs-make-incremental";
 // const makeIncremental = require("babylonjs-make-incremental");
 
 makeIncremental(
-    "src/scenes",
+    "src/scenes/mainScene",
     {
-        excludedPaths: ["secondScene", "thirdScene/subScene", "thirdScene/scene01.babylon"],
-        excludedMeshes: {
-            "thirdScene/scene02.babylon": [/^car-/, /^box-/, /^building/]
-        },
+        excludedMeshes: [/^car-/, /^box-/, /^building/],
     }
 );
 ```
