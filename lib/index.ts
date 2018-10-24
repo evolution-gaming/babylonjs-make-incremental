@@ -33,6 +33,12 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
     readdirSync(currentPath).forEach((file: string) => {
         const filePath = join(currentPath, file);
         const babylonExtension = ".babylon";
+        const incrementalPart = ".incremental";
+
+        // Skip incremental files that already exist
+        if (file.indexOf(incrementalPart) !== -1) {
+            return;
+        }
 
         if (file.indexOf(babylonExtension) > 0
             && file.indexOf(babylonExtension) === file.length - babylonExtension.length
@@ -72,7 +78,7 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
             }
 
             // Saving
-            const outputPath = `${filename}.incremental.babylon`;
+            const outputPath = `${filename}${incrementalPart}babylon`;
             const json = JSON.stringify(scene, null, 0);
             writeFileSync(join(currentPath, outputPath), json);
         }
