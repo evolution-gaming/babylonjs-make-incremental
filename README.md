@@ -31,3 +31,35 @@ makeIncremental(
     }
 );
 ```
+
+## CLI
+
+Install this package globally:
+
+```
+npm i -g babylonjs-make-incremental
+```
+
+Run the command:
+
+```
+babylonjs-make-incremental --src=./src/scenes/mainScene  --excludedMeshes="^car-,^box-,^building"
+```
+
+The `excludedMeshes` option should be a string of comma-delimited regexp strings, each of which will be passed to the constructor `new RegExp()`.
+
+## Developing this project
+
+Clone the repo, then do the usual setup:
+
+```
+$ npm install && npm run build
+```
+
+To develop the CLI, you need to run:
+
+```
+$ npm link
+```
+
+This should symlink the CLI and make it possible to call directly.

@@ -6,6 +6,7 @@ import { readdirSync, readFileSync, writeFileSync } from "fs";
 
 export interface OptionProps {
     excludedMeshes?: RegExp[];
+    skipFixSeparators?: boolean;
 }
 
 interface SearchOptionsProps {
@@ -17,7 +18,9 @@ export default function makeIncremental(src: string, options: OptionProps = {}) 
         throw new Error("No source directory provided. Please pass src in the options, e.g. /scene");
     }
 
-    const parsedSrc = fixSeparators(src);
+    const parsedSrc = (options.skipFixSeparators)
+        ? src
+        : fixSeparators(src);
 
     const parsedOptions = {
         excludedMeshes: (options.excludedMeshes || []),
