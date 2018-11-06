@@ -1,6 +1,6 @@
 {
   "name": "babylonjs-make-incremental",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A tool that generates incremental files from a babylon file.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -19,9 +19,9 @@
     "incremental"
   ],
   "devDependencies": {
-    "@types/node": "^8.0.14",
-    "tslint": "^5.5.0",
-    "tslint-eslint-rules": "3.4.0",
-    "typescript": "^2.4.1"
+    "@types/node": "^8.10.20",
+    "tslint": "^5.11.0",
+    "tslint-eslint-rules": "^5.3.1",
+    "typescript": "^3.0.1"
   }
 }
