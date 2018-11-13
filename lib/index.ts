@@ -4,6 +4,9 @@
 import { join, sep } from "path";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
 
+const babylonExtension = ".babylon";
+const incrementalPart = ".incremental";
+
 export interface OptionProps {
     excludedMeshes?: RegExp[];
     skipFixSeparators?: boolean;
