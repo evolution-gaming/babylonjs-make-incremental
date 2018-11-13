@@ -13,7 +13,7 @@ interface SearchOptionsProps {
     excludedMeshes: RegExp[];
 }
 
-export default function makeIncremental(src: string, options: OptionProps = {}) {
+export function makeIncremental(src: string, options: OptionProps = {}) {
     if (!src) {
         throw new Error("No source directory provided. Please pass src in the options, e.g. /scene");
     }
@@ -207,13 +207,5 @@ function createDelayLoadingFile(meshOrGeometry: any, outputDir: string, filename
 }
 
 function fixSeparators(path: string): string {
-    return trimSeparators(path.replace("/", sep).replace("\\", sep));
-}
-
-function trimSeparators(path: string): string {
-    return path.split(sep).filter(s => s && s !== ".").join(sep);
-}
-
-if (module && module.hasOwnProperty("exports")) {
-    module.exports = makeIncremental;
+    return path.replace("/", sep).replace("\\", sep);
 }

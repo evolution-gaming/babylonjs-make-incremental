@@ -20,9 +20,9 @@ Import/require the exposed function `makeIncremental` to your script. It accepts
 
 Example usage:
 ```javascript
-import makeIncremental from "babylonjs-make-incremental";
+import { makeIncremental } from "babylonjs-make-incremental";
 // Alternatively
-// const makeIncremental = require("babylonjs-make-incremental");
+// const makeIncremental = require("babylonjs-make-incremental").makeIncremental;
 
 makeIncremental(
     "src/scenes/mainScene",
