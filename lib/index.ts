@@ -30,58 +30,54 @@ export function makeIncremental(src: string, options: OptionProps = {}) {
 }
 
 function searchBabylonFiles(root: string, currentPath: string, options: SearchOptionsProps) {
-    readdirSync(currentPath).forEach((file: string) => {
+    const files = readdirSync(currentPath).filter((file: string) => {
+        return (
+            file.indexOf(incrementalPart) === -1 && // Don't process already-incremental files
+            file.indexOf(babylonExtension) !== -1 &&
+            file.indexOf(babylonExtension) === file.length - babylonExtension.length
+        );
+    });
+
+    files.forEach((file: string) => {
         const filePath = join(currentPath, file);
-        const babylonExtension = ".babylon";
-        const incrementalPart = ".incremental";
+        const scene = JSON.parse(readFileSync(filePath).toString());
+        const filename = file.substr(0, file.lastIndexOf("."));
 
-        // Skip incremental files that already exist
-        if (file.indexOf(incrementalPart) !== -1) {
-            return;
-        }
-
-        if (file.indexOf(babylonExtension) > 0
-            && file.indexOf(babylonExtension) === file.length - babylonExtension.length
-        ) {
-            const scene = JSON.parse(readFileSync(filePath).toString());
-            const filename = file.substr(0, file.lastIndexOf("."));
-
-            scene.autoClear = true;
-            scene.useDelayedTextureLoading = true;
-            const doNotDelayLoadingForGeometries: string[] = [];
-            const excludedMeshes = options.excludedMeshes;
-            // Parsing meshes
-            scene.meshes.forEach((mesh: any) => {
-                if (!excludedMeshes.some(meshCheck => meshCheck.test(mesh.name))) {
-                    // Do not delay load collisions object
-                    if (mesh.checkCollisions) {
-                        if (mesh.geometryId) {
-                            doNotDelayLoadingForGeometries.push(mesh.geometryId);
-                        }
-                    } else {
-                        extract(mesh, currentPath, filename, true);
+        scene.autoClear = true;
+        scene.useDelayedTextureLoading = true;
+        const doNotDelayLoadingForGeometries: string[] = [];
+        const excludedMeshes = options.excludedMeshes;
+        // Parsing meshes
+        scene.meshes.forEach((mesh: any) => {
+            if (!excludedMeshes.some(meshCheck => meshCheck.test(mesh.name))) {
+                // Do not delay load collisions object
+                if (mesh.checkCollisions) {
+                    if (mesh.geometryId) {
+                        doNotDelayLoadingForGeometries.push(mesh.geometryId);
                     }
+                } else {
+                    extract(mesh, currentPath, filename, true);
+                }
+            }
+        });
+
+        // Parsing vertexData
+        const geometries = scene.geometries;
+        if (geometries) {
+            const vertexData = geometries.vertexData;
+            vertexData.forEach((geometry: any) => {
+                const id = geometry.id;
+
+                if (!doNotDelayLoadingForGeometries.some(g => g === id)) {
+                    extract(geometry, currentPath, filename, false);
                 }
             });
-
-            // Parsing vertexData
-            const geometries = scene.geometries;
-            if (geometries) {
-                const vertexData = geometries.vertexData;
-                vertexData.forEach((geometry: any) => {
-                    const id = geometry.id;
-
-                    if (!doNotDelayLoadingForGeometries.some(g => g === id)) {
-                        extract(geometry, currentPath, filename, false);
-                    }
-                });
-            }
-
-            // Saving
-            const outputPath = `${filename}${incrementalPart}babylon`;
-            const json = JSON.stringify(scene, null, 0);
-            writeFileSync(join(currentPath, outputPath), json);
         }
+
+        // Saving
+        const outputPath = `${filename}${incrementalPart}babylon`;
+        const json = JSON.stringify(scene, null, 0);
+        writeFileSync(join(currentPath, outputPath), json);
     });
 }
 
