@@ -75,7 +75,7 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
         }
 
         // Saving
-        const outputPath = `${filename}${incrementalPart}babylon`;
+        const outputPath = `${filename}${incrementalPart}.babylon`;
         const json = JSON.stringify(scene, null, 0);
         writeFileSync(join(currentPath, outputPath), json);
     });
