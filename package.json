@@ -1,6 +1,6 @@
 {
   "name": "babylonjs-make-incremental",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A tool that generates incremental files from a babylon file.",
   "main": "index.js",
   "types": "index.d.ts",
