@@ -4,6 +4,9 @@
   "description": "A tool that generates incremental files from a babylon file.",
   "main": "index.js",
   "types": "index.d.ts",
+  "bin": {
+    "babylonjs-make-incremental": "./cli.js"
+  },
   "scripts": {
     "build": "npm run lint && node ./node_modules/typescript/lib/tsc.js",
     "lint": "node ./node_modules/tslint/bin/tslint './lib/*.ts' --type-check -p .",
@@ -23,5 +26,8 @@
     "tslint": "^5.11.0",
     "tslint-eslint-rules": "^5.3.1",
     "typescript": "^3.0.1"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0"
   }
 }
