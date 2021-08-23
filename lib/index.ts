@@ -9,10 +9,12 @@ const incrementalPart = ".incremental";
 
 export interface OptionProps {
     excludedMeshes?: RegExp[];
+    minMeshSize?: number;
 }
 
 interface SearchOptionsProps {
     excludedMeshes: RegExp[];
+    minMeshSize: number;
 }
 
 export function makeIncremental(src: string, options: OptionProps = {}) {
@@ -24,6 +26,7 @@ export function makeIncremental(src: string, options: OptionProps = {}) {
 
     const parsedOptions = {
         excludedMeshes: (options.excludedMeshes || []),
+        minMeshSize: options.minMeshSize || 0,
     };
 
     searchBabylonFiles(parsedSrc, parsedSrc, parsedOptions);
@@ -47,16 +50,27 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
         scene.useDelayedTextureLoading = true;
         const doNotDelayLoadingForGeometries: string[] = [];
         const excludedMeshes = options.excludedMeshes;
+        const minMeshSize = options.minMeshSize;
         // Parsing meshes
         scene.meshes.forEach((mesh: any) => {
+
             if (!excludedMeshes.some(meshCheck => meshCheck.test(mesh.name))) {
-                // Do not delay load collisions object
-                if (mesh.checkCollisions) {
-                    if (mesh.geometryId) {
-                        doNotDelayLoadingForGeometries.push(mesh.geometryId);
+                const meshString = createDelayLoadingString(mesh, true);
+                if  (!minMeshSize || minMeshSize < meshString.length) {
+                    // Do not delay load collisions object
+                    if (mesh.checkCollisions) {
+                        if (mesh.geometryId) {
+                            doNotDelayLoadingForGeometries.push(mesh.geometryId);
+                        }
+                    } else {
+                        extract(mesh, currentPath, filename, meshString, true);
                     }
                 } else {
-                    extract(mesh, currentPath, filename, true);
+                    // tslint:disable-next-line:no-console
+                    console.log(
+                        // tslint:disable-next-line:max-line-length
+                        `Skipping ${mesh.name} as size ${meshString.length} is smaller than ${minMeshSize} from minMeshSize option`,
+                    );
                 }
             }
         });
@@ -69,7 +83,17 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
                 const id = geometry.id;
 
                 if (!doNotDelayLoadingForGeometries.some(g => g === id)) {
-                    extract(geometry, currentPath, filename, false);
+
+                    const geometryString = createDelayLoadingString(geometry, false);
+                    if (!minMeshSize || geometryString.length > minMeshSize) {
+                        extract(geometry, currentPath, filename, geometryString, false);
+                    } else {
+                        // tslint:disable-next-line:no-console
+                        console.log(
+                            // tslint:disable-next-line:max-line-length
+                            `Skipping ${geometry.id} as size ${geometryString.length} is smaller than ${minMeshSize} from minMeshSize option`,
+                        );
+                    }
                 }
             });
         }
@@ -81,12 +105,12 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
     });
 }
 
-function extract(meshOrGeometry: any, outputDir: string, filename: string, mesh = true) {
+function extract(meshOrGeometry: any, outputDir: string, filename: string, meshString: string, mesh = true) {
     // tslint:disable-next-line:no-console
     console.log(`Extracting ${mesh ? meshOrGeometry.name : meshOrGeometry.id}`);
 
     if (meshOrGeometry.positions && meshOrGeometry.normals && meshOrGeometry.indices) {
-        meshOrGeometry.delayLoadingFile = createDelayLoadingFile(meshOrGeometry, outputDir, filename, mesh);
+        meshOrGeometry.delayLoadingFile = createDelayLoadingFile(meshOrGeometry, outputDir, filename, meshString, mesh);
         // tslint:disable-next-line:no-console
         console.log(`Delay loading file: ${meshOrGeometry.delayLoadingFile}`);
 
@@ -161,11 +185,7 @@ function extract(meshOrGeometry: any, outputDir: string, filename: string, mesh 
     }
 }
 
-function createDelayLoadingFile(meshOrGeometry: any, outputDir: string, filename: string, mesh = true) {
-    const encodedName = (mesh ? meshOrGeometry.name : meshOrGeometry.id).replace("+", "_").replace(" ", "_");
-
-    const outputPath = `${filename}.${encodedName}${mesh ? ".babylonmeshdata" : ".babylongeometrydata"}`;
-
+function createDelayLoadingString(meshOrGeometry: any, mesh = true): string {
     const result: any = {
         positions: meshOrGeometry.positions,
         indices: meshOrGeometry.indices,
@@ -196,8 +216,19 @@ function createDelayLoadingFile(meshOrGeometry: any, outputDir: string, filename
         result.subMeshes = meshOrGeometry.subMeshes;
     }
 
-    const json = JSON.stringify(result, null, 0);
-    writeFileSync(join(outputDir, outputPath), json);
+    return JSON.stringify(result, null, 0);
+}
+
+function createDelayLoadingFile(
+    meshOrGeometry: any,
+    outputDir: string,
+    filename: string,
+    meshString: string,
+    mesh = true,
+) {
+    const encodedName = (mesh ? meshOrGeometry.name : meshOrGeometry.id).replace("+", "_").replace(" ", "_");
+    const outputPath = `${filename}.${encodedName}${mesh ? ".babylonmeshdata" : ".babylongeometrydata"}`;
+    writeFileSync(join(outputDir, outputPath), meshString);
 
     return encodeURIComponent(outputPath.split(sep).pop() as string);
 }
