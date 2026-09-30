@@ -7,7 +7,7 @@
   "bin": "dist/cli.js",
   "scripts": {
     "build": "npm run lint && tsc",
-    "lint": "eslint './lib/*.ts'",
+    "lint": "eslint \"./lib/*.ts\"",
     "prepublishOnly": "npm run build",
     "start": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
