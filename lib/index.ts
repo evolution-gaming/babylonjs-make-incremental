@@ -1,5 +1,5 @@
 /*
- * Converted to JS from https://github.com/BabylonJS/Babylon.js/tree/master/Tools/MakeIncremental
+ * Converted to JS from https://github.com/BabylonJS/Exporters/tree/master/Tools/MakeIncremental
  */
 import { join, sep } from "path";
 import { readdirSync, readFileSync, writeFileSync } from "fs";

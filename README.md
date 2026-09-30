@@ -4,7 +4,7 @@
 
 This is a tool that generates incremental files from a babylon file.
 
-It is meant to work with [Babylon.js](https://github.com/BabylonJS/Babylon.js). The tool is a port of [make incremental](https://github.com/BabylonJS/Babylon.js/tree/master/Tools/MakeIncremental).
+It is meant to work with [Babylon.js](https://github.com/BabylonJS/Babylon.js). The tool is a port of [make incremental](https://github.com/BabylonJS/Exporters/tree/master/Tools/MakeIncremental).
 
 ## Build
 
