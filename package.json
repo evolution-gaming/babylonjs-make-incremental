@@ -1,33 +1,41 @@
 {
   "name": "babylonjs-make-incremental",
-  "version": "3.1.2",
+  "version": "4.0.0",
   "description": "A tool that generates incremental files from a babylon file.",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "bin": {
-    "babylonjs-make-incremental": "./cli.js"
-  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": "dist/cli.js",
   "scripts": {
-    "build": "npm run lint && node ./node_modules/typescript/lib/tsc.js",
-    "lint": "node ./node_modules/tslint/bin/tslint './lib/*.ts' --type-check -p .",
+    "build": "npm run lint && tsc",
+    "lint": "eslint './lib/*.ts'",
     "prepublishOnly": "npm run build",
-    "start": "node ./node_modules/typescript/lib/tsc.js",
+    "start": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Evolution Gaming",
-  "license": "Apache 2.0",
-  "repository": "https://github.com/evolution-gaming/babylonjs-make-incremental",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evolution-gaming/babylonjs-make-incremental.git"
+  },
   "keywords": [
     "babylonjs",
     "incremental"
   ],
+  "engines": {
+    "node": "^22.18.0 || >=24.3.0"
+  },
   "devDependencies": {
-    "@types/node": "^8.10.20",
-    "tslint": "^5.11.0",
-    "tslint-eslint-rules": "^5.3.1",
-    "typescript": "^3.0.1"
+    "@eslint/js": "9.39.4",
+    "@stylistic/eslint-plugin": "5.10.0",
+    "@types/minimist": "^1.2.5",
+    "@types/node": "^22.20.4",
+    "eslint": "9.39.4",
+    "jiti": "2.7.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "8.71.0"
   },
   "dependencies": {
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.8"
   }
 }

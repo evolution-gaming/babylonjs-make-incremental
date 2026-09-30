@@ -6,5 +6,5 @@ lib/
 .DS_Store
 Thumbs.db
 node_modules
-tslint.json
 tsconfig.json
+eslint.config.ts
