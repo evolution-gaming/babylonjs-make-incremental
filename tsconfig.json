@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "outDir": "./",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    "rootDir": "./lib",
     "strict": true,
-    "target": "es5"
+    "target": "es2024",
+    "types": [
+      "@types/node"
+    ]
   },
   "files": [
-    "lib/index.ts"
+    "lib/index.ts",
+    "lib/cli.ts"
   ]
 }

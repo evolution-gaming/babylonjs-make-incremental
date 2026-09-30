@@ -1,5 +1,5 @@
 /*
- * Converted to JS from https://github.com/BabylonJS/Babylon.js/tree/master/Tools/MakeIncremental
+ * Converted to JS from https://github.com/BabylonJS/Exporters/tree/master/Tools/MakeIncremental
  */
 import { join, sep } from "path";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
@@ -35,9 +35,9 @@ export function makeIncremental(src: string, options: OptionProps = {}) {
 function searchBabylonFiles(root: string, currentPath: string, options: SearchOptionsProps) {
     const files = readdirSync(currentPath).filter((file: string) => {
         return (
-            file.indexOf(incrementalPart) === -1 && // Don't process already-incremental files
-            file.indexOf(babylonExtension) !== -1 &&
-            file.indexOf(babylonExtension) === file.length - babylonExtension.length
+            file.indexOf(incrementalPart) === -1 // Don't process already-incremental files
+            && file.indexOf(babylonExtension) !== -1
+            && file.indexOf(babylonExtension) === file.length - babylonExtension.length
         );
     });
 
@@ -53,10 +53,9 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
         const minMeshSize = options.minMeshSize;
         // Parsing meshes
         scene.meshes.forEach((mesh: any) => {
-
             if (!excludedMeshes.some(meshCheck => meshCheck.test(mesh.name))) {
                 const meshString = createDelayLoadingString(mesh, true);
-                if  (!minMeshSize || minMeshSize < meshString.length) {
+                if (!minMeshSize || minMeshSize < meshString.length) {
                     // Do not delay load collisions object
                     if (mesh.checkCollisions) {
                         if (mesh.geometryId) {
@@ -66,9 +65,8 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
                         extract(mesh, currentPath, filename, meshString, true);
                     }
                 } else {
-                    // tslint:disable-next-line:no-console
                     console.log(
-                        // tslint:disable-next-line:max-line-length
+                        // eslint-disable-next-line @stylistic/max-len
                         `Skipping ${mesh.name} as size ${meshString.length} is smaller than ${minMeshSize} from minMeshSize option`,
                     );
                 }
@@ -83,14 +81,12 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
                 const id = geometry.id;
 
                 if (!doNotDelayLoadingForGeometries.some(g => g === id)) {
-
                     const geometryString = createDelayLoadingString(geometry, false);
                     if (!minMeshSize || geometryString.length > minMeshSize) {
                         extract(geometry, currentPath, filename, geometryString, false);
                     } else {
-                        // tslint:disable-next-line:no-console
                         console.log(
-                            // tslint:disable-next-line:max-line-length
+                            // eslint-disable-next-line @stylistic/max-len
                             `Skipping ${geometry.id} as size ${geometryString.length} is smaller than ${minMeshSize} from minMeshSize option`,
                         );
                     }
@@ -106,12 +102,11 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
 }
 
 function extract(meshOrGeometry: any, outputDir: string, filename: string, meshString: string, mesh = true) {
-    // tslint:disable-next-line:no-console
     console.log(`Extracting ${mesh ? meshOrGeometry.name : meshOrGeometry.id}`);
 
     if (meshOrGeometry.positions && meshOrGeometry.normals && meshOrGeometry.indices) {
         meshOrGeometry.delayLoadingFile = createDelayLoadingFile(meshOrGeometry, outputDir, filename, meshString, mesh);
-        // tslint:disable-next-line:no-console
+
         console.log(`Delay loading file: ${meshOrGeometry.delayLoadingFile}`);
 
         // Compute bounding boxes
