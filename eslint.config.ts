@@ -20,7 +20,6 @@ export default defineConfig({
         "no-bitwise": "error",
         "no-caller": "error",
         "no-cond-assign": ["error", "always"],
-        "no-console": "error",
         "no-duplicate-imports": "error",
         "no-eval": "error",
         "no-extra-bind": "error",
@@ -65,10 +64,5 @@ export default defineConfig({
         "@stylistic/linebreak-style": ["error", "unix"],
         "@stylistic/max-len": ["error", { code: 120 }],
         "@stylistic/quotes": ["error", "double", { avoidEscape: true, allowTemplateLiterals: "always" }],
-    },
-}, {
-    files: ["lib/cli.ts"],
-    rules: {
-        "no-console": "off",
     },
 });

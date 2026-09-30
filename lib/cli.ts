@@ -1,10 +1,19 @@
 #! /usr/bin/env node
 
 import { join, sep } from "path";
-import minimist from "minimist";
+import { parseArgs } from "node:util";
 import { makeIncremental, OptionProps } from "./index";
 
-const argv = minimist(process.argv.slice(2));
+const argsOptions = {
+    src: {
+        type: "string",
+    },
+    excludedMeshes: {
+        type: "string",
+    },
+} as const;
+
+const { values: argv } = parseArgs({ options: argsOptions });
 
 if (!argv.src) {
     throw new Error("you must provide a --src flag");

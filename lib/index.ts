@@ -65,7 +65,6 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
                         extract(mesh, currentPath, filename, meshString, true);
                     }
                 } else {
-                    // eslint-disable-next-line no-console
                     console.log(
                         // eslint-disable-next-line @stylistic/max-len
                         `Skipping ${mesh.name} as size ${meshString.length} is smaller than ${minMeshSize} from minMeshSize option`,
@@ -86,7 +85,6 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
                     if (!minMeshSize || geometryString.length > minMeshSize) {
                         extract(geometry, currentPath, filename, geometryString, false);
                     } else {
-                        // eslint-disable-next-line no-console
                         console.log(
                             // eslint-disable-next-line @stylistic/max-len
                             `Skipping ${geometry.id} as size ${geometryString.length} is smaller than ${minMeshSize} from minMeshSize option`,
@@ -104,12 +102,11 @@ function searchBabylonFiles(root: string, currentPath: string, options: SearchOp
 }
 
 function extract(meshOrGeometry: any, outputDir: string, filename: string, meshString: string, mesh = true) {
-    // eslint-disable-next-line no-console
     console.log(`Extracting ${mesh ? meshOrGeometry.name : meshOrGeometry.id}`);
 
     if (meshOrGeometry.positions && meshOrGeometry.normals && meshOrGeometry.indices) {
         meshOrGeometry.delayLoadingFile = createDelayLoadingFile(meshOrGeometry, outputDir, filename, meshString, mesh);
-        // eslint-disable-next-line no-console
+
         console.log(`Delay loading file: ${meshOrGeometry.delayLoadingFile}`);
 
         // Compute bounding boxes
